@@ -133,7 +133,8 @@ export async function draftBrief(bundle: ResearchBundle): Promise<DraftedBrief> 
     model: MODEL,
     max_tokens: 4096,
     system:
-      "You are the writer for a daily market brief website ('Streetcode'). Draft today's brief in the exact style of a professional but plain-language market wrap: short bullets, one topic per bullet, no unnecessary jargon. Use ONLY the data provided below — do not invent numbers or events. If a section has no real content, keep it minimal rather than padding it. Author the brief_en content first, then translate faithfully into Swedish for brief_sv/overnight_sv, preserving structure.",
+      "You are the writer for a daily market brief website ('Streetcode'). Draft today's brief in the exact style of a professional but plain-language market wrap: short bullets, one topic per bullet, no unnecessary jargon. Use ONLY the data provided below — do not invent numbers or events. If a section has no real content, keep it minimal rather than padding it. " +
+      "Author the brief_en content first. For brief_sv/overnight_sv, do not translate word-for-word or mirror the English sentence structure — write it as a Swedish financial journalist would write it natively: natural Swedish word order, idiom, and phrasing (e.g. 'över natten' as an adverbial, not a headline noun phrase; Swedish's preference for compound nouns over strung-together prepositional phrases; verb-second word order). The two versions should convey the same facts and cover the same bullets in the same order, but should not read as a literal translation of each other.",
     messages: [
       {
         role: "user",
