@@ -1,0 +1,41 @@
+import Link from "next/link";
+import { isLocale, getDictionary } from "@/lib/i18n/dictionaries";
+import { notFound } from "next/navigation";
+import { getLatestBrief } from "@/lib/briefs";
+import { BriefContent } from "@/components/brief-content";
+
+export const revalidate = 300;
+
+export default async function TodayPage({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
+
+  const dict = getDictionary(locale).today;
+  const brief = await getLatestBrief();
+
+  if (!brief) {
+    return (
+      <div className="mx-auto w-full max-w-2xl px-6 py-24 text-center">
+        <p className="text-muted">{dict.empty}</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <BriefContent brief={brief} locale={locale} />
+      <div className="mx-auto w-full max-w-2xl px-6 pb-8">
+        <Link
+          href={`/${locale}/archive`}
+          className="text-sm font-medium text-accent hover:underline"
+        >
+          {dict.readArchive} →
+        </Link>
+      </div>
+    </>
+  );
+}
