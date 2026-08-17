@@ -3,12 +3,12 @@ import { getDictionary, type Locale } from "@/lib/i18n/dictionaries";
 import { formatBriefDate, formatShortDate } from "@/lib/format-date";
 import type { Brief } from "@/lib/supabase/client";
 import type { EarningsEventRow, HeatMapSnapshot } from "@/lib/calendar";
-import { STOCK_UNIVERSE } from "@/lib/pipeline/sources/stock-universe";
+import { UNIVERSE_BY_SYMBOL, rankEarnings } from "@/lib/earnings";
+import { normalizeBulletText } from "@/lib/normalize-bullets";
 import { StockTreemap } from "@/components/stock-treemap";
 import { StockHeatmapList } from "@/components/stock-heatmap-list";
 import { HeatmapLegend } from "@/components/heatmap-legend";
 
-const UNIVERSE_BY_SYMBOL = new Map(STOCK_UNIVERSE.map((s) => [s.symbol, s]));
 const MAX_OTHER_PER_DAY = 10;
 
 const IMPORTANCE_STYLES: Record<string, string> = {
@@ -17,24 +17,8 @@ const IMPORTANCE_STYLES: Record<string, string> = {
   low: "bg-border text-muted",
 };
 
-/** Known large-caps first (by market cap), then the alphabetical long tail. */
-function rankEarnings(items: EarningsEventRow[]): EarningsEventRow[] {
-  return items.slice().sort((a, b) => {
-    const capA = UNIVERSE_BY_SYMBOL.get(a.symbol)?.marketCapB ?? -1;
-    const capB = UNIVERSE_BY_SYMBOL.get(b.symbol)?.marketCapB ?? -1;
-    if (capA !== capB) return capB - capA;
-    return a.symbol.localeCompare(b.symbol);
-  });
-}
-
 function renderBody(text: string) {
-  // Defensive: if the model runs multiple bullets onto one line (e.g.
-  // "...senaste hot. - Oil jumped...") instead of separate lines, re-insert
-  // a real line break so each still renders as its own bullet. Only matches
-  // " - " directly after a sentence-ending period and before a capitalized
-  // word, so mid-sentence dashes survive untouched.
-  const normalized = text.replace(/(?<=\.)\s+-\s+(?=[A-ZÅÄÖ])/g, "\n- ");
-  return normalized
+  return normalizeBulletText(text)
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean)

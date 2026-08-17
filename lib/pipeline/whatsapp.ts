@@ -38,7 +38,10 @@ export type WhatsAppSendResult = {
  * Twilio error — that's expected and reported per-recipient, not fatal to
  * the batch.
  */
-export async function sendWhatsAppBrief(message: string): Promise<WhatsAppSendResult[]> {
+export async function sendWhatsAppBrief(
+  message: string,
+  mediaUrl?: string,
+): Promise<WhatsAppSendResult[]> {
   const recipients = getRecipients();
   if (recipients.length === 0) {
     console.warn("[whatsapp] WHATSAPP_RECIPIENTS not set, skipping send.");
@@ -54,6 +57,7 @@ export async function sendWhatsAppBrief(message: string): Promise<WhatsAppSendRe
       const msg = await client.messages.create({
         from: from.startsWith("whatsapp:") ? from : `whatsapp:${from}`,
         to: to.startsWith("whatsapp:") ? to : `whatsapp:${to}`,
+        ...(mediaUrl ? { mediaUrl: [mediaUrl] } : {}),
         // Some Twilio accounts require an approved Content Template for
         // every outbound WhatsApp message, even to a joined sandbox number
         // (error: "ContentSid Required"). When TWILIO_CONTENT_SID is set,
