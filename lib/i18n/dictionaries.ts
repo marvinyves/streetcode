@@ -14,6 +14,8 @@ export const dictionaries = {
     nav: {
       today: "Today",
       archive: "Archive",
+      calendar: "Calendar",
+      heatmap: "Heat Map",
     },
     today: {
       heading: "Today's Brief",
@@ -31,6 +33,22 @@ export const dictionaries = {
       subheading: "Every day's brief, permanently on record.",
       empty: "No briefs yet.",
       back: "Back to today",
+    },
+    calendar: {
+      heading: "This Week",
+      subheading: "Economic releases and earnings reports, next 7 days.",
+      economicHeading: "Economic Calendar",
+      economicEmpty: "No major US economic releases scheduled this week.",
+      earningsHeading: "Earnings Calendar",
+      earningsEmpty: "No earnings reports found for this week.",
+      beforeOpen: "Before open",
+      afterClose: "After close",
+    },
+    heatmap: {
+      heading: "Sector Heat Map",
+      subheading: "S&P 500 sector ETF performance, updated daily.",
+      empty: "No heat map data yet.",
+      asOf: "As of",
     },
     askBar: {
       placeholder: "Ask about today's market...",
@@ -51,6 +69,8 @@ export const dictionaries = {
     nav: {
       today: "Idag",
       archive: "Arkiv",
+      calendar: "Kalender",
+      heatmap: "Värmekarta",
     },
     today: {
       heading: "Dagens uppdatering",
@@ -68,6 +88,22 @@ export const dictionaries = {
       subheading: "Varje dags uppdatering, permanent sparad.",
       empty: "Inga uppdateringar än.",
       back: "Tillbaka till idag",
+    },
+    calendar: {
+      heading: "Denna vecka",
+      subheading: "Ekonomiska utgivningar och kvartalsrapporter, kommande 7 dagar.",
+      economicHeading: "Ekonomisk kalender",
+      economicEmpty: "Inga större amerikanska ekonomiska utgivningar denna vecka.",
+      earningsHeading: "Rapportkalender",
+      earningsEmpty: "Inga kvartalsrapporter hittades för denna vecka.",
+      beforeOpen: "Före öppning",
+      afterClose: "Efter stängning",
+    },
+    heatmap: {
+      heading: "Sektorernas värmekarta",
+      subheading: "S&P 500-sektorernas utveckling (ETF), uppdateras dagligen.",
+      empty: "Ingen data för värmekartan än.",
+      asOf: "Per",
     },
     askBar: {
       placeholder: "Fråga om dagens marknad...",

@@ -15,18 +15,30 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           <span className="h-2 w-2 rounded-full bg-accent" aria-hidden />
           {dict.siteName}
         </Link>
-        <nav className="flex items-center gap-4">
+        <nav className="flex items-center gap-2.5 overflow-x-auto sm:gap-4">
           <Link
             href={`/${locale}`}
-            className="text-sm text-muted transition-colors hover:text-foreground"
+            className="whitespace-nowrap text-sm text-muted transition-colors hover:text-foreground"
           >
             {dict.nav.today}
           </Link>
           <Link
             href={`/${locale}/archive`}
-            className="text-sm text-muted transition-colors hover:text-foreground"
+            className="whitespace-nowrap text-sm text-muted transition-colors hover:text-foreground"
           >
             {dict.nav.archive}
+          </Link>
+          <Link
+            href={`/${locale}/calendar`}
+            className="whitespace-nowrap text-sm text-muted transition-colors hover:text-foreground"
+          >
+            {dict.nav.calendar}
+          </Link>
+          <Link
+            href={`/${locale}/heatmap`}
+            className="whitespace-nowrap text-sm text-muted transition-colors hover:text-foreground"
+          >
+            {dict.nav.heatmap}
           </Link>
           <LocaleToggle locale={locale} />
         </nav>

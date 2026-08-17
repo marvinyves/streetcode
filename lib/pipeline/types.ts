@@ -1,0 +1,22 @@
+import type { KeyEvent, Source } from "@/lib/supabase/client";
+
+export type ResearchBundle = {
+  date: string;
+  fred: import("./sources/fred").FredSeriesResult[];
+  quotes: import("./sources/finnhub").FinnhubQuote[];
+  earnings: import("./sources/finnhub").FinnhubEarning[];
+  news: import("./sources/finnhub").FinnhubNews[];
+  reddit: import("./sources/reddit").RedditPost[];
+  webResearchMemo: string;
+};
+
+export type DraftedBrief = {
+  brief_en: string;
+  brief_sv: string;
+  overnight_en: string;
+  overnight_sv: string;
+  sentiment_notes: string;
+  key_events: KeyEvent[];
+  looking_ahead: KeyEvent[];
+  sources: Source[];
+};
