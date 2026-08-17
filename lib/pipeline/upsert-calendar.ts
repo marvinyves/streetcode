@@ -1,6 +1,6 @@
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { EconomicEvent, FinnhubEarning } from "./sources/finnhub";
-import type { SectorPerformance } from "./sources/heatmap";
+import type { SectorPerformance, StockPerformance } from "./sources/heatmap";
 
 export async function upsertEconomicEvents(
   fromDate: string,
@@ -66,12 +66,13 @@ export async function upsertEarningsEvents(
 export async function upsertHeatMapSnapshot(
   date: string,
   sectors: SectorPerformance[],
+  stocks: StockPerformance[],
 ) {
   const supabase = getSupabaseAdminClient();
 
   const { error } = await supabase
     .from("heat_map_snapshots")
-    .upsert({ date, sectors }, { onConflict: "date" });
+    .upsert({ date, sectors, stocks }, { onConflict: "date" });
   if (error) {
     throw new Error(`Failed to upsert heat_map_snapshots: ${error.message}`);
   }

@@ -39,6 +39,15 @@ export function BriefContent({
   const overnightLines = overnightText ? renderBody(overnightText) : null;
   const overnightHasBullets = overnightLines?.some((el) => el.type === "li");
 
+  const keyEvents =
+    locale === "sv" && brief.key_events_sv.length > 0
+      ? brief.key_events_sv
+      : brief.key_events;
+  const lookingAhead =
+    locale === "sv" && brief.looking_ahead_sv.length > 0
+      ? brief.looking_ahead_sv
+      : brief.looking_ahead;
+
   return (
     <article className="mx-auto w-full max-w-2xl px-6 py-12">
       <p className="text-sm font-medium text-accent">
@@ -75,13 +84,13 @@ export function BriefContent({
         </div>
       )}
 
-      {brief.key_events.length > 0 && (
+      {keyEvents.length > 0 && (
         <section className="mt-12">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
             {dict.keyEvents}
           </h2>
           <ul className="mt-4 divide-y divide-border rounded-xl border border-border">
-            {brief.key_events.map((event, i) => (
+            {keyEvents.map((event, i) => (
               <li key={i} className="flex flex-col gap-0.5 px-4 py-3">
                 <span className="text-xs font-medium uppercase tracking-wide text-accent">
                   {event.type}
@@ -129,13 +138,13 @@ export function BriefContent({
         </section>
       )}
 
-      {brief.looking_ahead.length > 0 && (
+      {lookingAhead.length > 0 && (
         <section className="mt-10 rounded-xl border border-accent/20 bg-accent-soft px-5 py-5">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-accent">
             {dict.lookingAhead}
           </h2>
           <ul className="mt-4 space-y-3">
-            {brief.looking_ahead.map((item, i) => (
+            {lookingAhead.map((item, i) => (
               <li key={i} className="flex flex-col gap-0.5">
                 <span className="text-xs font-medium uppercase tracking-wide text-accent">
                   {item.type}

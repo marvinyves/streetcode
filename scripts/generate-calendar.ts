@@ -6,7 +6,10 @@ import {
   fetchFinnhubEconomicCalendar,
 } from "@/lib/pipeline/sources/finnhub";
 import { fetchFredReleaseCalendar } from "@/lib/pipeline/sources/fred";
-import { fetchSectorHeatMap } from "@/lib/pipeline/sources/heatmap";
+import {
+  fetchSectorHeatMap,
+  fetchStockHeatMapQuotes,
+} from "@/lib/pipeline/sources/heatmap";
 import {
   upsertEconomicEvents,
   upsertEarningsEvents,
@@ -54,7 +57,12 @@ async function main() {
   console.log("Fetching sector heat map...");
   const sectors = await fetchSectorHeatMap();
   console.log(`  ${sectors.length} sectors`);
-  await upsertHeatMapSnapshot(today, sectors);
+
+  console.log("Fetching stock-level treemap quotes (this takes a bit, rate-limited)...");
+  const stocks = await fetchStockHeatMapQuotes();
+  console.log(`  ${stocks.length} stocks`);
+
+  await upsertHeatMapSnapshot(today, sectors, stocks);
   console.log("  Saved.");
 
   console.log("\n✓ Calendar and heat map data updated.\n");

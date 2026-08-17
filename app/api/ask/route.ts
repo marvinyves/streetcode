@@ -92,7 +92,11 @@ export async function POST(req: NextRequest) {
       const text = locale === "sv" && b.brief_sv ? b.brief_sv : b.brief_en;
       const overnight =
         locale === "sv" && b.overnight_sv ? b.overnight_sv : b.overnight_en;
-      const lookingAhead = b.looking_ahead
+      const lookingAheadItems =
+        locale === "sv" && b.looking_ahead_sv.length > 0
+          ? b.looking_ahead_sv
+          : b.looking_ahead;
+      const lookingAhead = lookingAheadItems
         .map((item) => `- ${item.label}${item.detail ? `: ${item.detail}` : ""}`)
         .join("\n");
 

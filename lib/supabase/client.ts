@@ -15,7 +15,9 @@ export type Brief = {
   overnight_en: string | null;
   overnight_sv: string | null;
   key_events: KeyEvent[];
+  key_events_sv: KeyEvent[];
   looking_ahead: KeyEvent[];
+  looking_ahead_sv: KeyEvent[];
   sentiment_notes: string | null;
   sources: Source[];
   created_at: string;

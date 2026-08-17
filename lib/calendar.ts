@@ -21,9 +21,17 @@ export type SectorPerformance = {
   changePercent: number;
 };
 
+export type StockPerformance = {
+  symbol: string;
+  sector: string;
+  marketCapB: number;
+  changePercent: number;
+};
+
 export type HeatMapSnapshot = {
   date: string;
   sectors: SectorPerformance[];
+  stocks: StockPerformance[];
 };
 
 function todayISO(): string {

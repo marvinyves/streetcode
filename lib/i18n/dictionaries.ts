@@ -45,8 +45,8 @@ export const dictionaries = {
       afterClose: "After close",
     },
     heatmap: {
-      heading: "Sector Heat Map",
-      subheading: "S&P 500 sector ETF performance, updated daily.",
+      heading: "Market Heat Map",
+      subheading: "Major US stocks by sector, sized by market cap, colored by today's move.",
       empty: "No heat map data yet.",
       asOf: "As of",
     },
@@ -100,8 +100,8 @@ export const dictionaries = {
       afterClose: "Efter stängning",
     },
     heatmap: {
-      heading: "Sektorvärmekarta",
-      subheading: "S&P 500:s sektorutveckling (ETF), uppdateras dagligen.",
+      heading: "Marknadens värmekarta",
+      subheading: "Stora amerikanska bolag efter sektor, storlek efter börsvärde, färg efter dagens rörelse.",
       empty: "Det finns ingen data för värmekartan ännu.",
       asOf: "Per",
     },

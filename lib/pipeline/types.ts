@@ -17,6 +17,8 @@ export type DraftedBrief = {
   overnight_sv: string;
   sentiment_notes: string;
   key_events: KeyEvent[];
+  key_events_sv: KeyEvent[];
   looking_ahead: KeyEvent[];
+  looking_ahead_sv: KeyEvent[];
   sources: Source[];
 };

@@ -52,13 +52,26 @@ const BRIEF_SCHEMA = {
     },
     key_events: {
       type: "array",
-      description: "Structured macro releases, earnings, and notable movers for today.",
+      description:
+        "Structured macro releases, earnings, and notable movers for today, in English. The 'type' field is a short category tag (e.g. 'Macro', 'Geopolitical', 'Commodity', 'Earnings', 'Defense').",
+      items: EVENT_ITEM_SCHEMA,
+    },
+    key_events_sv: {
+      type: "array",
+      description:
+        "The same events as key_events, in the same order — but written natively in Swedish (label/detail as a Swedish financial writer would phrase them, not a translation; 'type' as the natural Swedish category word, e.g. 'Makro', 'Geopolitik', 'Råvaror', 'Rapport', 'Försvar').",
       items: EVENT_ITEM_SCHEMA,
     },
     looking_ahead: {
       type: "array",
       description:
-        "What to watch tomorrow: 1-3 structured items (scheduled releases, earnings, or 'quiet calendar' if nothing major).",
+        "What to watch tomorrow, in English: 1-3 structured items (scheduled releases, earnings, or a 'quiet calendar' item if nothing major).",
+      items: EVENT_ITEM_SCHEMA,
+    },
+    looking_ahead_sv: {
+      type: "array",
+      description:
+        "The same items as looking_ahead, in the same order, written natively in Swedish (not a translation).",
       items: EVENT_ITEM_SCHEMA,
     },
     sources: {
@@ -74,7 +87,9 @@ const BRIEF_SCHEMA = {
     "overnight_sv",
     "sentiment_notes",
     "key_events",
+    "key_events_sv",
     "looking_ahead",
+    "looking_ahead_sv",
     "sources",
   ],
   additionalProperties: false,
@@ -131,10 +146,10 @@ export async function draftBrief(bundle: ResearchBundle): Promise<DraftedBrief> 
 
   const response = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 4096,
+    max_tokens: 5120,
     system:
       "You are the writer for a daily market brief website ('Streetcode'). Draft today's brief in the exact style of a professional but plain-language market wrap: short bullets, one topic per bullet, no unnecessary jargon. Use ONLY the data provided below — do not invent numbers or events. If a section has no real content, keep it minimal rather than padding it. " +
-      "Author the brief_en content first. For brief_sv/overnight_sv, do not translate word-for-word or mirror the English sentence structure — write it as a Swedish financial journalist would write it natively: natural Swedish word order, idiom, and phrasing (e.g. 'över natten' as an adverbial, not a headline noun phrase; Swedish's preference for compound nouns over strung-together prepositional phrases; verb-second word order). The two versions should convey the same facts and cover the same bullets in the same order, but should not read as a literal translation of each other.",
+      "Author the English fields first (brief_en, overnight_en, key_events, looking_ahead). For every _sv field (brief_sv, overnight_sv, key_events_sv, looking_ahead_sv), do not translate word-for-word or mirror the English sentence structure — write it as a Swedish financial journalist would write it natively: natural Swedish word order, idiom, and phrasing (e.g. 'över natten' as an adverbial, not a headline noun phrase; Swedish's preference for compound nouns over strung-together prepositional phrases; verb-second word order; natural Swedish category words for each item's 'type', not a literal translation of the English tag). Each Swedish field should cover the same facts as its English counterpart, in the same order, but should not read as a literal translation of it.",
     messages: [
       {
         role: "user",
