@@ -47,13 +47,24 @@ export async function sendWhatsAppBrief(message: string): Promise<WhatsAppSendRe
 
   const client = getClient();
   const from = process.env.TWILIO_WHATSAPP_FROM || SANDBOX_FROM;
+  const contentSid = process.env.TWILIO_CONTENT_SID;
 
   const results = await Promise.allSettled(
     recipients.map(async (to) => {
       const msg = await client.messages.create({
         from: from.startsWith("whatsapp:") ? from : `whatsapp:${from}`,
         to: to.startsWith("whatsapp:") ? to : `whatsapp:${to}`,
-        body: message,
+        // Some Twilio accounts require an approved Content Template for
+        // every outbound WhatsApp message, even to a joined sandbox number
+        // (error: "ContentSid Required"). When TWILIO_CONTENT_SID is set,
+        // send via that template with the full message as its single
+        // variable; otherwise send as plain free text.
+        ...(contentSid
+          ? {
+              contentSid,
+              contentVariables: JSON.stringify({ "1": message }),
+            }
+          : { body: message }),
       });
       return { to, sid: msg.sid };
     }),

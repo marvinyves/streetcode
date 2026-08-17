@@ -22,6 +22,9 @@ jobs:
       TWILIO_API_KEY_SECRET: ${{ secrets.TWILIO_API_KEY_SECRET }}
       WHATSAPP_RECIPIENTS: ${{ secrets.WHATSAPP_RECIPIENTS }}
       NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL }}
+      # Optional — only needed if Twilio requires a Content Template for
+      # outbound WhatsApp sends on this account (see lib/pipeline/whatsapp.ts).
+      TWILIO_CONTENT_SID: ${{ secrets.TWILIO_CONTENT_SID }}
     steps:
       - uses: actions/checkout@v4
 
