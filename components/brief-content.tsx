@@ -11,6 +11,12 @@ import { HeatmapLegend } from "@/components/heatmap-legend";
 const UNIVERSE_BY_SYMBOL = new Map(STOCK_UNIVERSE.map((s) => [s.symbol, s]));
 const MAX_OTHER_PER_DAY = 10;
 
+const IMPORTANCE_STYLES: Record<string, string> = {
+  high: "bg-accent text-white",
+  medium: "bg-accent-soft text-accent",
+  low: "bg-border text-muted",
+};
+
 /** Known large-caps first (by market cap), then the alphabetical long tail. */
 function rankEarnings(items: EarningsEventRow[]): EarningsEventRow[] {
   return items.slice().sort((a, b) => {
@@ -124,9 +130,20 @@ export function BriefContent({
           <ul className="mt-4 divide-y divide-border rounded-xl border border-border">
             {keyEvents.map((event, i) => (
               <li key={i} className="flex flex-col gap-0.5 px-4 py-3">
-                <span className="text-xs font-medium uppercase tracking-wide text-accent">
-                  {event.type}
-                </span>
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-medium uppercase tracking-wide text-accent">
+                    {event.type}
+                  </span>
+                  {event.importance && (
+                    <span
+                      className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${
+                        IMPORTANCE_STYLES[event.importance] ?? "bg-border text-muted"
+                      }`}
+                    >
+                      {event.importance}
+                    </span>
+                  )}
+                </div>
                 <span className="font-medium">{event.label}</span>
                 {event.detail && (
                   <span className="text-sm text-muted">{event.detail}</span>

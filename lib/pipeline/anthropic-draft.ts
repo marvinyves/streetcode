@@ -9,8 +9,14 @@ const EVENT_ITEM_SCHEMA = {
     type: { type: "string", description: "e.g. macro, earnings, fed, commodity" },
     label: { type: "string" },
     detail: { type: "string" },
+    importance: {
+      type: "string",
+      enum: ["high", "medium", "low"],
+      description:
+        "How much this should stand out to a reader scanning quickly: 'high' for market-moving items (Fed decisions, major geopolitical escalation, surprise data), 'medium' for notable but not urgent items, 'low' for minor or routine items.",
+    },
   },
-  required: ["type", "label", "detail"],
+  required: ["type", "label", "detail", "importance"],
   additionalProperties: false,
 } as const;
 

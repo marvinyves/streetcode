@@ -27,6 +27,7 @@ export type KeyEvent = {
   type: string;
   label: string;
   detail?: string;
+  importance?: "high" | "medium" | "low";
 };
 
 export type Source = {

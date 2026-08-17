@@ -60,7 +60,7 @@ export function AskBar({ locale }: { locale: Locale }) {
     >
       <div
         className={`pointer-events-auto w-full max-w-xl rounded-2xl border border-border bg-surface/95 shadow-lg shadow-black/5 backdrop-blur-md transition-all duration-300 ease-out ${
-          open ? "p-4" : "p-1.5"
+          open ? "p-4" : "askbar-glow p-1.5"
         }`}
       >
         {open && (answer || status !== "idle") && (

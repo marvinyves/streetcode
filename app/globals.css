@@ -63,3 +63,23 @@ body {
   background: var(--accent-soft);
   color: var(--accent);
 }
+
+@keyframes askbar-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 35%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 7px color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+}
+
+.askbar-glow {
+  animation: askbar-pulse 2.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .askbar-glow {
+    animation: none;
+  }
+}
