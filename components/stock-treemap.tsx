@@ -1,6 +1,9 @@
 import { squarify } from "@/lib/treemap";
 import { heatColor } from "@/lib/heatmap-colors";
+import { formatPercent } from "@/lib/format-percent";
+import { sectorLabel } from "@/lib/sector-labels";
 import type { StockPerformance } from "@/lib/calendar";
+import type { Locale } from "@/lib/i18n/dictionaries";
 
 const CANVAS_W = 1000;
 const CANVAS_H = 560;
@@ -10,7 +13,13 @@ function pct(value: number, total: number) {
   return `${(value / total) * 100}%`;
 }
 
-export function StockTreemap({ stocks }: { stocks: StockPerformance[] }) {
+export function StockTreemap({
+  stocks,
+  locale,
+}: {
+  stocks: StockPerformance[];
+  locale: Locale;
+}) {
   const bySector = new Map<string, StockPerformance[]>();
   for (const s of stocks) {
     const list = bySector.get(s.sector) ?? [];
@@ -55,7 +64,7 @@ export function StockTreemap({ stocks }: { stocks: StockPerformance[] }) {
                 fontSize: sectorArea > 12000 ? "11px" : "9px",
               }}
             >
-              {box.sector}
+              {sectorLabel(box.sector, locale)}
             </div>
             {stockBoxes.map((tile) => {
               const style = heatColor(tile.changePercent);
@@ -66,7 +75,7 @@ export function StockTreemap({ stocks }: { stocks: StockPerformance[] }) {
               return (
                 <div
                   key={tile.symbol}
-                  title={`${tile.symbol} ${tile.changePercent >= 0 ? "+" : ""}${tile.changePercent.toFixed(2)}%`}
+                  title={`${tile.symbol} ${formatPercent(tile.changePercent, locale)}`}
                   className="absolute flex flex-col items-center justify-center gap-0.5 overflow-hidden whitespace-nowrap border border-surface px-0.5 text-center leading-none"
                   style={{
                     left: pct(tile.x, CANVAS_W),
@@ -88,8 +97,7 @@ export function StockTreemap({ stocks }: { stocks: StockPerformance[] }) {
                       className="font-medium opacity-90"
                       style={{ fontSize: `${Math.max(fontSize * 0.6, 9)}px` }}
                     >
-                      {tile.changePercent >= 0 ? "+" : ""}
-                      {tile.changePercent.toFixed(2)}%
+                      {formatPercent(tile.changePercent, locale)}
                     </span>
                   )}
                 </div>

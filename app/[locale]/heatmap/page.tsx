@@ -6,6 +6,8 @@ import { StockTreemap } from "@/components/stock-treemap";
 import { StockHeatmapList } from "@/components/stock-heatmap-list";
 import { HeatmapLegend } from "@/components/heatmap-legend";
 import { heatColor } from "@/lib/heatmap-colors";
+import { formatPercent } from "@/lib/format-percent";
+import { sectorEtfLabel } from "@/lib/sector-labels";
 
 export const revalidate = 300;
 
@@ -36,10 +38,10 @@ export default async function HeatMapPage({
           {snapshot.stocks.length > 0 && (
             <div className="mt-4">
               <div className="sm:hidden">
-                <StockHeatmapList stocks={snapshot.stocks} />
+                <StockHeatmapList stocks={snapshot.stocks} locale={locale} />
               </div>
               <div className="hidden sm:block">
-                <StockTreemap stocks={snapshot.stocks} />
+                <StockTreemap stocks={snapshot.stocks} locale={locale} />
               </div>
               <HeatmapLegend caption={dict.legendCaption} />
             </div>
@@ -59,14 +61,13 @@ export default async function HeatMapPage({
                       style={{ backgroundColor: style.background }}
                     >
                       <span className="text-xs font-medium" style={{ color: style.color }}>
-                        {sector.label}
+                        {sectorEtfLabel(sector.symbol, sector.label, locale)}
                       </span>
                       <span
                         className="mt-2 text-lg font-semibold tabular-nums"
                         style={{ color: style.color }}
                       >
-                        {sector.changePercent >= 0 ? "+" : ""}
-                        {sector.changePercent.toFixed(2)}%
+                        {formatPercent(sector.changePercent, locale)}
                       </span>
                     </div>
                   );

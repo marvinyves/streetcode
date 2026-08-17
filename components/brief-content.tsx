@@ -225,10 +225,10 @@ export function BriefContent({
           </div>
           <div className="mt-3">
             <div className="sm:hidden">
-              <StockHeatmapList stocks={heatmap.stocks} />
+              <StockHeatmapList stocks={heatmap.stocks} locale={locale} />
             </div>
             <div className="hidden sm:block">
-              <StockTreemap stocks={heatmap.stocks} />
+              <StockTreemap stocks={heatmap.stocks} locale={locale} />
             </div>
             <HeatmapLegend caption={heatmapDict.legendCaption} />
           </div>

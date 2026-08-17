@@ -34,7 +34,8 @@ const BRIEF_SCHEMA = {
     },
     brief_sv: {
       type: "string",
-      description: "Swedish translation of brief_en, same bullet structure and order.",
+      description:
+        "The same facts and bullet structure as brief_en, in the same order — but written natively in Swedish, as a Swedish financial journalist would write it (not a translation of the English sentences). Use idiomatic Swedish financial phrasing (e.g. 'månad för månad' not a calque of 'month-over-month'; Swedish decimal commas; don't parenthesize the English term for something that already has a normal Swedish name, e.g. write 'styrräntan', not 'styrräntan (effective fed funds rate)').",
     },
     overnight_en: {
       type: "string",
@@ -43,7 +44,8 @@ const BRIEF_SCHEMA = {
     },
     overnight_sv: {
       type: "string",
-      description: "Swedish translation of overnight_en.",
+      description:
+        "The same facts as overnight_en, in the same order — but written natively in Swedish, as a Swedish financial journalist would write it (not a translation of the English sentences).",
     },
     sentiment_notes: {
       type: "string",
