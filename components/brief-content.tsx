@@ -28,7 +28,13 @@ function rankEarnings(items: EarningsEventRow[]): EarningsEventRow[] {
 }
 
 function renderBody(text: string) {
-  return text
+  // Defensive: if the model runs multiple bullets onto one line (e.g.
+  // "...senaste hot. - Oil jumped...") instead of separate lines, re-insert
+  // a real line break so each still renders as its own bullet. Only matches
+  // " - " directly after a sentence-ending period and before a capitalized
+  // word, so mid-sentence dashes survive untouched.
+  const normalized = text.replace(/(?<=\.)\s+-\s+(?=[A-ZÅÄÖ])/g, "\n- ");
+  return normalized
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean)

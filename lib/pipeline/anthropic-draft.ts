@@ -36,12 +36,12 @@ const BRIEF_SCHEMA = {
     brief_en: {
       type: "string",
       description:
-        "The main daily brief in English: short bullet points starting with '- ', one topic per bullet, plain language, no jargon overload. Cover index/futures movement, notable macro data, currency moves, gold, oil, and other commodities worth flagging.",
+        "The main daily brief in English: 5-7 bullet points, one topic per bullet. CRITICAL FORMATTING: each bullet is its own line — separate bullets with a real newline character (\\n), and ONLY a real newline, never a ' - ' or '- ' in the middle of a line. Each line starts with '- ' followed by that bullet's full text (2-3 plain sentences). Never put two bullets' worth of sentences on the same line. Each bullet reads like a market-wrap paragraph for a general reader, NOT a headline-style single sentence stacked with tickers and percentages: state what happened, then explain briefly why it happened or why it matters. Lead each bullet with at most one supporting figure if needed, not several proxies chained together in the same sentence. Cover index/futures movement, notable macro data, currency moves, gold, oil, and other commodities worth flagging.",
     },
     brief_sv: {
       type: "string",
       description:
-        "The same facts and bullet structure as brief_en, in the same order — but written natively in Swedish, as a Swedish financial journalist would write it (not a translation of the English sentences). Use idiomatic Swedish financial phrasing (e.g. 'månad för månad' not a calque of 'month-over-month'; Swedish decimal commas; don't parenthesize the English term for something that already has a normal Swedish name, e.g. write 'styrräntan', not 'styrräntan (effective fed funds rate)').",
+        "The same facts, bullet count, and per-bullet sentence count as brief_en, in the same order — but written natively in Swedish, as a Swedish financial journalist would write it (not a translation of the English sentences). CRITICAL FORMATTING: same rule as brief_en — each bullet on its own line, separated by a real newline character (\\n) and starting with '- ', never joined onto one line with ' - ' in the middle. Use idiomatic Swedish financial phrasing (e.g. 'månad för månad' not a calque of 'month-over-month'; Swedish decimal commas (0,35 procent); Swedish thousands separator is a space, not a comma (4 400 dollar, not 4,400 dollar); don't parenthesize the English term for something that already has a normal Swedish name, e.g. write 'styrräntan', not 'styrräntan (effective fed funds rate)').",
     },
     overnight_en: {
       type: "string",
@@ -154,9 +154,9 @@ export async function draftBrief(bundle: ResearchBundle): Promise<DraftedBrief> 
 
   const response = await anthropic.messages.create({
     model: MODEL,
-    max_tokens: 5120,
+    max_tokens: 8192,
     system:
-      "You are the writer for a daily market brief website ('Streetcode'). Draft today's brief in the exact style of a professional but plain-language market wrap: short bullets, one topic per bullet, no unnecessary jargon. Use ONLY the data provided below — do not invent numbers or events. If a section has no real content, keep it minimal rather than padding it. " +
+      "You are the writer for a daily market brief website ('Streetcode'). Draft today's brief in the style of a plain-language market wrap for a general reader, not a trader's data dump: one topic per bullet, each bullet 2-3 full sentences that state what happened and then explain the context or reason in accessible language, no unnecessary jargon, and no bullets that are just a string of tickers and percentages. Use ONLY the data provided below — do not invent numbers or events. If a section has no real content, keep it minimal rather than padding it. " +
       "Author the English fields first (brief_en, overnight_en, key_events, looking_ahead). For every _sv field (brief_sv, overnight_sv, key_events_sv, looking_ahead_sv), do not translate word-for-word or mirror the English sentence structure — write it as a Swedish financial journalist would write it natively: natural Swedish word order, idiom, and phrasing (e.g. 'över natten' as an adverbial, not a headline noun phrase; Swedish's preference for compound nouns over strung-together prepositional phrases; verb-second word order; natural Swedish category words for each item's 'type', not a literal translation of the English tag). Each Swedish field should cover the same facts as its English counterpart, in the same order, but should not read as a literal translation of it.",
     messages: [
       {
@@ -172,12 +172,23 @@ export async function draftBrief(bundle: ResearchBundle): Promise<DraftedBrief> 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } as any);
 
-  const textBlock = (response as Anthropic.Message).content.find(
-    (b) => b.type === "text",
-  );
+  const message = response as Anthropic.Message;
+  const textBlock = message.content.find((b) => b.type === "text");
   if (!textBlock || textBlock.type !== "text") {
     throw new Error("No text content returned from draft call.");
   }
 
-  return JSON.parse(textBlock.text) as DraftedBrief;
+  if (message.stop_reason === "max_tokens") {
+    throw new Error(
+      `Draft response was truncated at max_tokens (${message.usage?.output_tokens} output tokens) before the JSON completed — raise max_tokens in anthropic-draft.ts.`,
+    );
+  }
+
+  try {
+    return JSON.parse(textBlock.text) as DraftedBrief;
+  } catch (err) {
+    throw new Error(
+      `Failed to parse draft JSON (stop_reason: ${message.stop_reason}): ${(err as Error).message}`,
+    );
+  }
 }
