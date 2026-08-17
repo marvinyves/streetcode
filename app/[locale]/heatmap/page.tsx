@@ -4,24 +4,10 @@ import { getLatestHeatMap } from "@/lib/calendar";
 import { formatShortDate } from "@/lib/format-date";
 import { StockTreemap } from "@/components/stock-treemap";
 import { StockHeatmapList } from "@/components/stock-heatmap-list";
+import { HeatmapLegend } from "@/components/heatmap-legend";
+import { heatColor } from "@/lib/heatmap-colors";
 
 export const revalidate = 300;
-
-function sectorCellStyle(changePercent: number): { background: string; color: string } {
-  const clamped = Math.max(-3, Math.min(3, changePercent));
-  const intensity = Math.abs(clamped) / 3;
-
-  if (changePercent >= 0) {
-    return {
-      background: `rgba(22, 163, 74, ${0.12 + intensity * 0.55})`,
-      color: intensity > 0.55 ? "#ffffff" : "#15803d",
-    };
-  }
-  return {
-    background: `rgba(220, 38, 38, ${0.12 + intensity * 0.55})`,
-    color: intensity > 0.55 ? "#ffffff" : "#b91c1c",
-  };
-}
 
 export default async function HeatMapPage({
   params,
@@ -55,6 +41,7 @@ export default async function HeatMapPage({
               <div className="hidden sm:block">
                 <StockTreemap stocks={snapshot.stocks} />
               </div>
+              <HeatmapLegend caption={dict.legendCaption} />
             </div>
           )}
 
@@ -64,7 +51,7 @@ export default async function HeatMapPage({
                 .slice()
                 .sort((a, b) => b.changePercent - a.changePercent)
                 .map((sector) => {
-                  const style = sectorCellStyle(sector.changePercent);
+                  const style = heatColor(sector.changePercent, 3);
                   return (
                     <div
                       key={sector.symbol}

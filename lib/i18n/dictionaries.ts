@@ -1,7 +1,7 @@
-export const locales = ["en", "sv"] as const;
+export const locales = ["sv", "en"] as const;
 export type Locale = (typeof locales)[number];
 
-export const defaultLocale: Locale = "en";
+export const defaultLocale: Locale = "sv";
 
 export function isLocale(value: string): value is Locale {
   return (locales as readonly string[]).includes(value);
@@ -28,6 +28,7 @@ export const dictionaries = {
       lookingAhead: "Looking Ahead",
       sources: "Sources",
       readArchive: "Browse the archive",
+      weekEarnings: "This Week's Earnings",
     },
     archive: {
       heading: "Archive",
@@ -51,6 +52,8 @@ export const dictionaries = {
       subheading: "Major US stocks by sector, sized by market cap, colored by today's move.",
       empty: "No heat map data yet.",
       asOf: "As of",
+      legendCaption: "Color intensity shows the size of today's move",
+      viewFull: "View full heat map",
     },
     askBar: {
       placeholder: "Ask about today's market...",
@@ -85,6 +88,7 @@ export const dictionaries = {
       lookingAhead: "Vad som väntar imorgon",
       sources: "Källor",
       readArchive: "Bläddra i arkivet",
+      weekEarnings: "Veckans rapporter",
     },
     archive: {
       heading: "Arkiv",
@@ -108,6 +112,8 @@ export const dictionaries = {
       subheading: "Stora amerikanska bolag efter sektor, storlek efter börsvärde, färg efter dagens rörelse.",
       empty: "Det finns ingen data för värmekartan ännu.",
       asOf: "Per",
+      legendCaption: "Färgstyrkan visar storleken på dagens rörelse",
+      viewFull: "Visa hela värmekartan",
     },
     askBar: {
       placeholder: "Fråga om dagens marknad...",

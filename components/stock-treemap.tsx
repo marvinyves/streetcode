@@ -1,25 +1,10 @@
 import { squarify } from "@/lib/treemap";
+import { heatColor } from "@/lib/heatmap-colors";
 import type { StockPerformance } from "@/lib/calendar";
 
 const CANVAS_W = 1000;
 const CANVAS_H = 560;
 const HEADER_UNITS = 24;
-
-function tileColor(changePercent: number): { background: string; color: string } {
-  const clamped = Math.max(-5, Math.min(5, changePercent));
-  const intensity = Math.abs(clamped) / 5;
-
-  if (changePercent >= 0) {
-    return {
-      background: `rgba(34, 197, 94, ${0.25 + intensity * 0.6})`,
-      color: "#f0fdf4",
-    };
-  }
-  return {
-    background: `rgba(239, 68, 68, ${0.25 + intensity * 0.6})`,
-    color: "#fef2f2",
-  };
-}
 
 function pct(value: number, total: number) {
   return `${(value / total) * 100}%`;
@@ -43,7 +28,7 @@ export function StockTreemap({ stocks }: { stocks: StockPerformance[] }) {
 
   return (
     <div
-      className="relative w-full overflow-hidden rounded-xl border border-border bg-[#0b1220]"
+      className="relative w-full overflow-hidden rounded-xl border border-border bg-surface"
       style={{ aspectRatio: `${CANVAS_W} / ${CANVAS_H}` }}
     >
       {sectorBoxes.map((box) => {
@@ -60,7 +45,7 @@ export function StockTreemap({ stocks }: { stocks: StockPerformance[] }) {
         return (
           <div key={box.sector}>
             <div
-              className="absolute overflow-hidden truncate border border-[#0b1220] bg-[#1a2338] px-1.5 text-[9px] font-semibold uppercase tracking-wide text-[#94a3b8]"
+              className="absolute overflow-hidden truncate border border-surface bg-background px-1.5 text-[9px] font-semibold uppercase tracking-wide text-muted"
               style={{
                 left: pct(box.x, CANVAS_W),
                 top: pct(box.y, CANVAS_H),
@@ -73,7 +58,7 @@ export function StockTreemap({ stocks }: { stocks: StockPerformance[] }) {
               {box.sector}
             </div>
             {stockBoxes.map((tile) => {
-              const style = tileColor(tile.changePercent);
+              const style = heatColor(tile.changePercent);
               const area = tile.w * tile.h;
               const showPercent = area > 1100;
               const fontSize = area > 6000 ? 22 : area > 2500 ? 15 : area > 1100 ? 11 : 8;
@@ -82,7 +67,7 @@ export function StockTreemap({ stocks }: { stocks: StockPerformance[] }) {
                 <div
                   key={tile.symbol}
                   title={`${tile.symbol} ${tile.changePercent >= 0 ? "+" : ""}${tile.changePercent.toFixed(2)}%`}
-                  className="absolute flex flex-col items-center justify-center gap-0.5 overflow-hidden whitespace-nowrap border border-[#0b1220] px-0.5 text-center leading-none"
+                  className="absolute flex flex-col items-center justify-center gap-0.5 overflow-hidden whitespace-nowrap border border-surface px-0.5 text-center leading-none"
                   style={{
                     left: pct(tile.x, CANVAS_W),
                     top: pct(tile.y, CANVAS_H),

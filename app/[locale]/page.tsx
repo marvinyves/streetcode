@@ -2,6 +2,7 @@ import Link from "next/link";
 import { isLocale, getDictionary } from "@/lib/i18n/dictionaries";
 import { notFound } from "next/navigation";
 import { getLatestBrief } from "@/lib/briefs";
+import { getEarningsForWeek, getLatestHeatMap } from "@/lib/calendar";
 import { BriefContent } from "@/components/brief-content";
 
 export const revalidate = 300;
@@ -15,7 +16,11 @@ export default async function TodayPage({
   if (!isLocale(locale)) notFound();
 
   const dict = getDictionary(locale).today;
-  const brief = await getLatestBrief();
+  const [brief, weekEarnings, heatmap] = await Promise.all([
+    getLatestBrief(),
+    getEarningsForWeek(),
+    getLatestHeatMap(),
+  ]);
 
   if (!brief) {
     return (
@@ -27,7 +32,13 @@ export default async function TodayPage({
 
   return (
     <>
-      <BriefContent brief={brief} locale={locale} />
+      <BriefContent
+        brief={brief}
+        locale={locale}
+        weekEarnings={weekEarnings}
+        heatmap={heatmap}
+      />
+
       <div className="mx-auto w-full max-w-2xl px-4 pb-8 sm:px-6">
         <Link
           href={`/${locale}/archive`}

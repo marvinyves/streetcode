@@ -1,14 +1,5 @@
+import { heatColor, heatTextColor } from "@/lib/heatmap-colors";
 import type { StockPerformance } from "@/lib/calendar";
-
-function chipStyle(changePercent: number): { background: string; color: string } {
-  const clamped = Math.max(-5, Math.min(5, changePercent));
-  const intensity = Math.abs(clamped) / 5;
-
-  if (changePercent >= 0) {
-    return { background: `rgba(34, 197, 94, ${0.15 + intensity * 0.5})`, color: "#15803d" };
-  }
-  return { background: `rgba(239, 68, 68, ${0.15 + intensity * 0.5})`, color: "#b91c1c" };
-}
 
 /**
  * Mobile-first alternative to the treemap: a treemap has no legible way to
@@ -40,7 +31,7 @@ export function StockHeatmapList({ stocks }: { stocks: StockPerformance[] }) {
             <span className="text-sm font-medium">{s.sector}</span>
             <span
               className="text-sm font-semibold tabular-nums"
-              style={{ color: s.avg >= 0 ? "#15803d" : "#b91c1c" }}
+              style={{ color: heatTextColor(s.avg) }}
             >
               {s.avg >= 0 ? "+" : ""}
               {s.avg.toFixed(2)}%
@@ -48,7 +39,7 @@ export function StockHeatmapList({ stocks }: { stocks: StockPerformance[] }) {
           </div>
           <div className="flex flex-wrap gap-1.5 p-3">
             {s.items.map((stock) => {
-              const style = chipStyle(stock.changePercent);
+              const style = heatColor(stock.changePercent);
               return (
                 <span
                   key={stock.symbol}
