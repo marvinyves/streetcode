@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { ResearchBundle } from "./types";
 
-const MODEL = "claude-sonnet-5";
+const MODEL = "claude-haiku-4-5-20251001";
 
 function formatDataForPrompt(
   bundle: Omit<ResearchBundle, "webResearchMemo">,
