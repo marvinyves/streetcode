@@ -118,15 +118,20 @@ export function BriefContent({
         </section>
       )}
 
-      {hasBullets ? (
-        <ul className="mt-8 list-disc space-y-4 pl-5 text-[17px] leading-relaxed marker:text-accent">
-          {bodyLines}
-        </ul>
-      ) : (
-        <div className="mt-8 space-y-4 text-[17px] leading-relaxed">
-          {bodyLines}
-        </div>
-      )}
+      <section className="mt-8 rounded-xl border-2 border-accent px-5 py-5">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-accent">
+          {dict.marketUpdates}
+        </h2>
+        {hasBullets ? (
+          <ul className="mt-3 list-disc space-y-4 pl-5 text-[17px] leading-relaxed marker:text-accent">
+            {bodyLines}
+          </ul>
+        ) : (
+          <div className="mt-3 space-y-4 text-[17px] leading-relaxed">
+            {bodyLines}
+          </div>
+        )}
+      </section>
 
       {keyEvents.length > 0 && (
         <section className="mt-12">
