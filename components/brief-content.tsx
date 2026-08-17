@@ -90,7 +90,7 @@ export function BriefContent({
       </h1>
 
       {overnightLines && (
-        <section className="mt-8">
+        <section className="mt-8 rounded-xl border border-border bg-panel px-5 py-5">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
             {dict.overnight}
           </h2>

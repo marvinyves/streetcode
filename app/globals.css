@@ -14,6 +14,7 @@
   --success-soft: #f0fdf4;
   --heat-up-fg: #15803d;
   --heat-down-fg: #b91c1c;
+  --panel: #f3f4f6;
 }
 
 @theme inline {
@@ -28,6 +29,7 @@
   --color-success: var(--success);
   --color-success-hover: var(--success-hover);
   --color-success-soft: var(--success-soft);
+  --color-panel: var(--panel);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -47,6 +49,7 @@
     --success-soft: rgba(74, 222, 128, 0.1);
     --heat-up-fg: #4ade80;
     --heat-down-fg: #f87171;
+    --panel: #1c2436;
   }
 }
 
