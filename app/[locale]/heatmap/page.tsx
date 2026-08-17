@@ -3,6 +3,7 @@ import { isLocale, getDictionary } from "@/lib/i18n/dictionaries";
 import { getLatestHeatMap } from "@/lib/calendar";
 import { formatShortDate } from "@/lib/format-date";
 import { StockTreemap } from "@/components/stock-treemap";
+import { StockHeatmapList } from "@/components/stock-heatmap-list";
 
 export const revalidate = 300;
 
@@ -34,8 +35,8 @@ export default async function HeatMapPage({
   const snapshot = await getLatestHeatMap();
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-12">
-      <h1 className="text-3xl font-semibold tracking-tight">{dict.heading}</h1>
+    <div className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-12">
+      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{dict.heading}</h1>
       <p className="mt-2 text-muted">{dict.subheading}</p>
 
       {!snapshot || (snapshot.stocks.length === 0 && snapshot.sectors.length === 0) ? (
@@ -48,7 +49,12 @@ export default async function HeatMapPage({
 
           {snapshot.stocks.length > 0 && (
             <div className="mt-4">
-              <StockTreemap stocks={snapshot.stocks} />
+              <div className="sm:hidden">
+                <StockHeatmapList stocks={snapshot.stocks} />
+              </div>
+              <div className="hidden sm:block">
+                <StockTreemap stocks={snapshot.stocks} />
+              </div>
             </div>
           )}
 

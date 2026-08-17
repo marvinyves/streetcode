@@ -18,8 +18,8 @@ export default async function ArchivePage({
   const briefs = await getAllBriefDates();
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-6 py-12">
-      <h1 className="text-3xl font-semibold tracking-tight">
+    <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
         {dict.heading}
       </h1>
       <p className="mt-2 text-muted">{dict.subheading}</p>
@@ -34,10 +34,10 @@ export default async function ArchivePage({
                 href={`/${locale}/archive/${brief.date}`}
                 className="flex items-center justify-between gap-4 px-4 py-4 transition-colors hover:bg-accent-soft"
               >
-                <span className="font-medium">
+                <span className="shrink-0 font-medium">
                   {formatShortDate(brief.date, locale)}
                 </span>
-                <span className="truncate text-sm text-muted">
+                <span className="min-w-0 truncate text-sm text-muted">
                   {brief.brief_en
                     .split("\n")
                     .find((l) => l.trim())

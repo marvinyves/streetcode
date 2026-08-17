@@ -22,7 +22,7 @@ export default async function ArchiveDatePage({
   return (
     <>
       <BriefContent brief={brief} locale={locale} heading={dict.entryHeading} />
-      <div className="mx-auto w-full max-w-2xl px-6 pb-8">
+      <div className="mx-auto w-full max-w-2xl px-4 pb-8 sm:px-6">
         <Link
           href={`/${locale}/archive`}
           className="text-sm font-medium text-accent hover:underline"

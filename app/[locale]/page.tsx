@@ -19,7 +19,7 @@ export default async function TodayPage({
 
   if (!brief) {
     return (
-      <div className="mx-auto w-full max-w-2xl px-6 py-24 text-center">
+      <div className="mx-auto w-full max-w-2xl px-4 py-24 text-center sm:px-6">
         <p className="text-muted">{dict.empty}</p>
       </div>
     );
@@ -28,7 +28,7 @@ export default async function TodayPage({
   return (
     <>
       <BriefContent brief={brief} locale={locale} />
-      <div className="mx-auto w-full max-w-2xl px-6 pb-8">
+      <div className="mx-auto w-full max-w-2xl px-4 pb-8 sm:px-6">
         <Link
           href={`/${locale}/archive`}
           className="text-sm font-medium text-accent hover:underline"

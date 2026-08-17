@@ -54,7 +54,10 @@ export function AskBar({ locale }: { locale: Locale }) {
   }
 
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-6">
+    <div
+      className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-4"
+      style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))" }}
+    >
       <div
         className={`pointer-events-auto w-full max-w-xl rounded-2xl border border-border bg-surface/95 shadow-lg shadow-black/5 backdrop-blur-md transition-all duration-300 ease-out ${
           open ? "p-4" : "p-1.5"
@@ -86,12 +89,12 @@ export function AskBar({ locale }: { locale: Locale }) {
             onFocus={() => setOpen(true)}
             placeholder={dict.placeholder}
             maxLength={280}
-            className="min-w-0 flex-1 bg-transparent px-1 py-2 text-sm outline-none placeholder:text-muted"
+            className="min-w-0 flex-1 bg-transparent px-1 py-2.5 text-base outline-none placeholder:text-muted sm:py-2 sm:text-sm"
           />
           <button
             type="submit"
             disabled={status === "loading" || status === "streaming"}
-            className="shrink-0 rounded-xl bg-accent px-3.5 py-2 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50"
+            className="shrink-0 rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent-hover disabled:opacity-50 sm:px-3.5 sm:py-2"
           >
             {dict.send}
           </button>

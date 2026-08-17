@@ -23,7 +23,7 @@ export default async function LocaleLayout({
     <div className="flex min-h-screen flex-col">
       <SiteHeader locale={locale} />
       <main className="flex-1 pb-32">{children}</main>
-      <footer className="border-t border-border px-6 py-8 text-center text-xs text-muted">
+      <footer className="border-t border-border px-4 py-8 text-center text-xs text-muted sm:px-6">
         {dict.tagline}
       </footer>
       <AskBar locale={locale} />

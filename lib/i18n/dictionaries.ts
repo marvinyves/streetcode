@@ -16,6 +16,8 @@ export const dictionaries = {
       archive: "Archive",
       calendar: "Calendar",
       heatmap: "Heat Map",
+      openMenu: "Open menu",
+      closeMenu: "Close menu",
     },
     today: {
       heading: "Today's Brief",
@@ -71,6 +73,8 @@ export const dictionaries = {
       archive: "Arkiv",
       calendar: "Kalender",
       heatmap: "Värmekarta",
+      openMenu: "Öppna meny",
+      closeMenu: "Stäng meny",
     },
     today: {
       heading: "Dagens uppdatering",

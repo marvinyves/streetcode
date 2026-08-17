@@ -33,8 +33,8 @@ export default async function CalendarPage({
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-6 py-12">
-      <h1 className="text-3xl font-semibold tracking-tight">{dict.heading}</h1>
+    <div className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
+      <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{dict.heading}</h1>
       <p className="mt-2 text-muted">{dict.subheading}</p>
 
       <section className="mt-10">
