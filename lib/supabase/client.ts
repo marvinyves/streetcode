@@ -12,7 +12,10 @@ export type Brief = {
   date: string;
   brief_en: string;
   brief_sv: string | null;
+  overnight_en: string | null;
+  overnight_sv: string | null;
   key_events: KeyEvent[];
+  looking_ahead: KeyEvent[];
   sentiment_notes: string | null;
   sources: Source[];
   created_at: string;

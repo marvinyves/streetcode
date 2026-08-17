@@ -90,7 +90,17 @@ export async function POST(req: NextRequest) {
   const context = briefs
     .map((b) => {
       const text = locale === "sv" && b.brief_sv ? b.brief_sv : b.brief_en;
-      return `### ${b.date}\n${text}`;
+      const overnight =
+        locale === "sv" && b.overnight_sv ? b.overnight_sv : b.overnight_en;
+      const lookingAhead = b.looking_ahead
+        .map((item) => `- ${item.label}${item.detail ? `: ${item.detail}` : ""}`)
+        .join("\n");
+
+      const parts = [`### ${b.date}`];
+      if (overnight) parts.push(`Overnight & premarket:\n${overnight}`);
+      parts.push(text);
+      if (lookingAhead) parts.push(`Looking ahead:\n${lookingAhead}`);
+      return parts.join("\n\n");
     })
     .join("\n\n");
 

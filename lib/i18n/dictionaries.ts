@@ -18,8 +18,10 @@ export const dictionaries = {
     today: {
       heading: "Today's Brief",
       empty: "No brief has been published yet. Check back soon.",
+      overnight: "Overnight & Premarket",
       keyEvents: "Key events",
       sentiment: "Sentiment notes",
+      lookingAhead: "Looking Ahead",
       sources: "Sources",
       readArchive: "Browse the archive",
     },
@@ -53,8 +55,10 @@ export const dictionaries = {
     today: {
       heading: "Dagens uppdatering",
       empty: "Ingen uppdatering har publicerats än. Kom tillbaka snart.",
+      overnight: "Över natten & i förhandeln",
       keyEvents: "Viktiga händelser",
       sentiment: "Sentimentnoteringar",
+      lookingAhead: "Att vänta imorgon",
       sources: "Källor",
       readArchive: "Bläddra i arkivet",
     },
