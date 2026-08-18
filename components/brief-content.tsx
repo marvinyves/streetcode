@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionaries";
 import { formatBriefDate, formatShortDate } from "@/lib/format-date";
@@ -19,22 +20,58 @@ const IMPORTANCE_STYLES: Record<string, string> = {
   low: "bg-border text-muted",
 };
 
-function renderBody(text: string) {
-  return normalizeBulletText(text)
+/**
+ * Renders plain paragraphs and "- "-prefixed bullets as their own blocks —
+ * consecutive bullets group into one <ul>, standalone lines become <p> —
+ * so a leading scene-setting paragraph followed by bullets (the team's
+ * reference style) renders as valid HTML instead of a stray <p> inside a
+ * <ul>.
+ */
+function renderBody(text: string, size: "sm" | "base" = "base") {
+  const textSize = size === "sm" ? "text-[15px]" : "text-[17px]";
+  const bulletSpacing = size === "sm" ? "space-y-2" : "space-y-4";
+
+  const lines = normalizeBulletText(text)
     .split("\n")
     .map((line) => line.trim())
-    .filter(Boolean)
-    .map((line, i) => {
-      const isBullet = line.startsWith("-") || line.startsWith("•");
-      const content = isBullet ? line.replace(/^[-•]\s*/, "") : line;
-      return isBullet ? (
-        <li key={i} className="pl-1 marker:text-accent">
-          {content}
-        </li>
-      ) : (
-        <p key={i}>{content}</p>
+    .filter(Boolean);
+
+  const blocks: ReactNode[] = [];
+  let bulletGroup: string[] = [];
+
+  const flushBullets = () => {
+    if (bulletGroup.length === 0) return;
+    blocks.push(
+      <ul
+        key={`ul-${blocks.length}`}
+        className={`list-disc ${bulletSpacing} pl-5 ${textSize} leading-relaxed marker:text-accent`}
+      >
+        {bulletGroup.map((content, i) => (
+          <li key={i} className="pl-1 marker:text-accent">
+            {content}
+          </li>
+        ))}
+      </ul>,
+    );
+    bulletGroup = [];
+  };
+
+  for (const line of lines) {
+    const isBullet = line.startsWith("-") || line.startsWith("•");
+    if (isBullet) {
+      bulletGroup.push(line.replace(/^[-•]\s*/, ""));
+    } else {
+      flushBullets();
+      blocks.push(
+        <p key={`p-${blocks.length}`} className={`${textSize} leading-relaxed`}>
+          {line}
+        </p>,
       );
-    });
+    }
+  }
+  flushBullets();
+
+  return blocks;
 }
 
 export function BriefContent({
@@ -61,12 +98,10 @@ export function BriefContent({
   const earningsByDate = anticipatedEarningsByDate(weekEarnings ?? [], redditPosts ?? []);
   const bodyText = locale === "sv" && brief.brief_sv ? brief.brief_sv : brief.brief_en;
   const bodyLines = renderBody(bodyText);
-  const hasBullets = bodyLines.some((el) => el.type === "li");
 
   const overnightText =
     locale === "sv" && brief.overnight_sv ? brief.overnight_sv : brief.overnight_en;
-  const overnightLines = overnightText ? renderBody(overnightText) : null;
-  const overnightHasBullets = overnightLines?.some((el) => el.type === "li");
+  const overnightLines = overnightText ? renderBody(overnightText, "sm") : null;
 
   const keyEvents =
     locale === "sv" && brief.key_events_sv.length > 0
@@ -93,15 +128,7 @@ export function BriefContent({
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
             {dict.overnight}
           </h2>
-          {overnightHasBullets ? (
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-[15px] leading-relaxed marker:text-accent">
-              {overnightLines}
-            </ul>
-          ) : (
-            <div className="mt-3 space-y-2 text-[15px] leading-relaxed">
-              {overnightLines}
-            </div>
-          )}
+          <div className="mt-3 space-y-3">{overnightLines}</div>
         </section>
       )}
 
@@ -109,15 +136,7 @@ export function BriefContent({
         <h2 className="text-sm font-semibold uppercase tracking-wide text-accent">
           {dict.marketUpdates}
         </h2>
-        {hasBullets ? (
-          <ul className="mt-3 list-disc space-y-4 pl-5 text-[17px] leading-relaxed marker:text-accent">
-            {bodyLines}
-          </ul>
-        ) : (
-          <div className="mt-3 space-y-4 text-[17px] leading-relaxed">
-            {bodyLines}
-          </div>
-        )}
+        <div className="mt-3 space-y-3">{bodyLines}</div>
       </section>
 
       {keyEvents.length > 0 && (
