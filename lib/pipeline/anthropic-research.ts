@@ -69,7 +69,14 @@ export async function researchMarketContext(
   const response = await anthropic.messages.create({
     model: MODEL,
     max_tokens: 2048,
-    tools: [{ type: "web_search_20260209", name: "web_search", max_uses: 5 }],
+    tools: [
+      {
+        type: "web_search_20260209",
+        name: "web_search",
+        max_uses: 5,
+        allowed_callers: ["direct"],
+      },
+    ],
     system:
       "You are a markets researcher. Given today's structured data snapshot, use web search to find the qualitative 'why' behind today's biggest moves — Fed commentary, geopolitical drivers, notable earnings reactions, or macro narrative. Write a short research memo (plain text, a few short paragraphs) that a financial writer can use as source material. Be factual and specific; note where information came from.",
     messages: [
