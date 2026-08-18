@@ -56,7 +56,12 @@ const BRIEF_SCHEMA = {
     sentiment_notes: {
       type: "string",
       description:
-        "One or two sentences of qualitative retail/contrarian sentiment (from Reddit context if available). Empty string if nothing notable.",
+        "One or two sentences of qualitative retail/contrarian sentiment (from Reddit context if available), in English. Empty string if nothing notable.",
+    },
+    sentiment_notes_sv: {
+      type: "string",
+      description:
+        "The same facts as sentiment_notes, in the same order — but written natively in Swedish, as a Swedish financial journalist would write it (not a translation of the English sentences). Empty string if nothing notable.",
     },
     key_events: {
       type: "array",
@@ -94,6 +99,7 @@ const BRIEF_SCHEMA = {
     "overnight_en",
     "overnight_sv",
     "sentiment_notes",
+    "sentiment_notes_sv",
     "key_events",
     "key_events_sv",
     "looking_ahead",
@@ -157,7 +163,7 @@ export async function draftBrief(bundle: ResearchBundle): Promise<DraftedBrief> 
     max_tokens: 16384,
     system:
       "You are the writer for a daily market brief website ('Streetcode'). Draft today's brief in the style of a plain-language market wrap for a general reader, not a trader's data dump: one topic per bullet, each bullet 2-3 full sentences that state what happened and then explain the context or reason in accessible language, no unnecessary jargon, and no bullets that are just a string of tickers and percentages. Use ONLY the data provided below — do not invent numbers or events. If a section has no real content, keep it minimal rather than padding it. " +
-      "Author the English fields first (brief_en, overnight_en, key_events, looking_ahead). For every _sv field (brief_sv, overnight_sv, key_events_sv, looking_ahead_sv), do not translate word-for-word or mirror the English sentence structure — write it as a Swedish financial journalist would write it natively: natural Swedish word order, idiom, and phrasing (e.g. 'över natten' as an adverbial, not a headline noun phrase; Swedish's preference for compound nouns over strung-together prepositional phrases; verb-second word order; natural Swedish category words for each item's 'type', not a literal translation of the English tag). Each Swedish field should cover the same facts as its English counterpart, in the same order, but should not read as a literal translation of it.",
+      "Author the English fields first (brief_en, overnight_en, sentiment_notes, key_events, looking_ahead). For every _sv field (brief_sv, overnight_sv, sentiment_notes_sv, key_events_sv, looking_ahead_sv), do not translate word-for-word or mirror the English sentence structure — write it as a Swedish financial journalist would write it natively: natural Swedish word order, idiom, and phrasing (e.g. 'över natten' as an adverbial, not a headline noun phrase; Swedish's preference for compound nouns over strung-together prepositional phrases; verb-second word order; natural Swedish category words for each item's 'type', not a literal translation of the English tag). Each Swedish field should cover the same facts as its English counterpart, in the same order, but should not read as a literal translation of it.",
     messages: [
       {
         role: "user",

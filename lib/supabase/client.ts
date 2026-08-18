@@ -18,6 +18,7 @@ export type Brief = {
   looking_ahead: KeyEvent[];
   looking_ahead_sv: KeyEvent[];
   sentiment_notes: string | null;
+  sentiment_notes_sv: string | null;
   sources: Source[];
   created_at: string;
   updated_at: string;

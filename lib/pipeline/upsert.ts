@@ -12,6 +12,7 @@ export async function upsertBrief(date: string, brief: DraftedBrief) {
       overnight_en: brief.overnight_en,
       overnight_sv: brief.overnight_sv,
       sentiment_notes: brief.sentiment_notes || null,
+      sentiment_notes_sv: brief.sentiment_notes_sv || null,
       key_events: brief.key_events,
       key_events_sv: brief.key_events_sv,
       looking_ahead: brief.looking_ahead,

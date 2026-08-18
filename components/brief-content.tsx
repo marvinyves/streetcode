@@ -78,6 +78,8 @@ export function BriefContent({
     locale === "sv" && brief.looking_ahead_sv.length > 0
       ? brief.looking_ahead_sv
       : brief.looking_ahead;
+  const sentimentNotes =
+    locale === "sv" && brief.sentiment_notes_sv ? brief.sentiment_notes_sv : brief.sentiment_notes;
 
   return (
     <article className="mx-auto w-full max-w-2xl px-4 py-10 sm:px-6 sm:py-12">
@@ -152,13 +154,13 @@ export function BriefContent({
         </section>
       )}
 
-      {brief.sentiment_notes && (
+      {sentimentNotes && (
         <section className="mt-10">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
             {dict.sentiment}
           </h2>
           <p className="mt-3 text-[15px] leading-relaxed text-foreground/90">
-            {brief.sentiment_notes}
+            {sentimentNotes}
           </p>
         </section>
       )}
