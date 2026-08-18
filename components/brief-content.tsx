@@ -3,7 +3,8 @@ import { getDictionary, type Locale } from "@/lib/i18n/dictionaries";
 import { formatBriefDate, formatShortDate } from "@/lib/format-date";
 import type { Brief } from "@/lib/supabase/client";
 import type { EarningsEventRow, EconomicEventRow, HeatMapSnapshot } from "@/lib/calendar";
-import { UNIVERSE_BY_SYMBOL, rankEarnings } from "@/lib/earnings";
+import type { RedditPost } from "@/lib/pipeline/sources/reddit";
+import { anticipatedEarningsByDate } from "@/lib/earnings";
 import { normalizeBulletText } from "@/lib/normalize-bullets";
 import { StockTreemap } from "@/components/stock-treemap";
 import { StockHeatmapList } from "@/components/stock-heatmap-list";
@@ -42,6 +43,7 @@ export function BriefContent({
   heading,
   weekEarnings,
   weekEconomic,
+  redditPosts,
   heatmap,
 }: {
   brief: Brief;
@@ -49,18 +51,14 @@ export function BriefContent({
   heading?: string;
   weekEarnings?: EarningsEventRow[];
   weekEconomic?: EconomicEventRow[];
+  redditPosts?: RedditPost[];
   heatmap?: HeatMapSnapshot | null;
 }) {
   const dict = getDictionary(locale).today;
   const calendarDict = getDictionary(locale).calendar;
   const heatmapDict = getDictionary(locale).heatmap;
 
-  const earningsByDate = new Map<string, EarningsEventRow[]>();
-  for (const e of weekEarnings ?? []) {
-    const list = earningsByDate.get(e.date) ?? [];
-    list.push(e);
-    earningsByDate.set(e.date, list);
-  }
+  const earningsByDate = anticipatedEarningsByDate(weekEarnings ?? [], redditPosts ?? []);
   const bodyText = locale === "sv" && brief.brief_sv ? brief.brief_sv : brief.brief_en;
   const bodyLines = renderBody(bodyText);
   const hasBullets = bodyLines.some((el) => el.type === "li");
@@ -181,9 +179,8 @@ export function BriefContent({
           </h2>
           <div className="mt-4 space-y-4">
             {Array.from(earningsByDate.entries()).map(([date, items]) => {
-              const ranked = rankEarnings(items);
-              const known = ranked.filter((item) => UNIVERSE_BY_SYMBOL.has(item.symbol));
-              const other = ranked.filter((item) => !UNIVERSE_BY_SYMBOL.has(item.symbol));
+              const prominent = items.filter((item) => item.tier !== "other");
+              const other = items.filter((item) => item.tier === "other");
               const shownOther = other.slice(0, MAX_OTHER_PER_DAY);
               const extra = other.length - shownOther.length;
               return (
@@ -192,25 +189,32 @@ export function BriefContent({
                     {formatShortDate(date, locale)}
                   </span>
                   <ul className="mt-1.5 flex flex-wrap gap-1.5">
-                    {known.map((item) => (
-                      <li
-                        key={item.id}
-                        className="rounded-lg border border-success/20 bg-surface px-2.5 py-1 text-sm"
-                        title={
-                          item.hour === "bmo"
-                            ? calendarDict.beforeOpen
-                            : item.hour === "amc"
-                              ? calendarDict.afterClose
-                              : undefined
-                        }
-                      >
-                        <span className="font-medium">{item.symbol}</span>
-                        <span className="text-muted">
-                          {" "}
-                          · {UNIVERSE_BY_SYMBOL.get(item.symbol)!.name}
-                        </span>
-                      </li>
-                    ))}
+                    {prominent.map((item) => {
+                      const hint =
+                        item.hour === "bmo"
+                          ? calendarDict.beforeOpen
+                          : item.hour === "amc"
+                            ? calendarDict.afterClose
+                            : undefined;
+                      return item.tier === "large-cap" ? (
+                        <li
+                          key={item.id}
+                          className="rounded-lg border border-success/20 bg-surface px-2.5 py-1 text-sm"
+                          title={hint}
+                        >
+                          <span className="font-medium">{item.symbol}</span>
+                          <span className="text-muted"> · {item.name}</span>
+                        </li>
+                      ) : (
+                        <li
+                          key={item.id}
+                          className="rounded-lg border border-accent/30 bg-accent-soft px-2.5 py-1 text-sm font-medium text-accent"
+                          title={[hint, dict.trendingOnReddit].filter(Boolean).join(" · ")}
+                        >
+                          🔥 {item.symbol}
+                        </li>
+                      );
+                    })}
                     {shownOther.map((item) => (
                       <li
                         key={item.id}

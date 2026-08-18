@@ -30,6 +30,7 @@ export const dictionaries = {
       sources: "Sources",
       readArchive: "Browse the archive",
       weekEarnings: "This Week's Earnings",
+      trendingOnReddit: "Trending on Reddit this week",
     },
     archive: {
       heading: "Archive",
@@ -94,6 +95,7 @@ export const dictionaries = {
       sources: "Källor",
       readArchive: "Bläddra i arkivet",
       weekEarnings: "Veckans rapporter",
+      trendingOnReddit: "Diskuteras mycket på Reddit denna vecka",
     },
     archive: {
       heading: "Arkiv",

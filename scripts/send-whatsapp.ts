@@ -4,7 +4,8 @@ config({ path: ".env.local" });
 import { getLatestBrief } from "@/lib/briefs";
 import { getEarningsForWeek } from "@/lib/calendar";
 import { formatBriefDate, formatShortDate } from "@/lib/format-date";
-import { largeCapEarningsByDate, type NamedEarningsEvent } from "@/lib/earnings";
+import { anticipatedEarningsByDate, type TieredEarningsEvent } from "@/lib/earnings";
+import { fetchRedditSentiment } from "@/lib/pipeline/sources/reddit";
 import { normalizeBulletText } from "@/lib/normalize-bullets";
 import { sendWhatsAppBrief } from "@/lib/pipeline/whatsapp";
 
@@ -20,12 +21,18 @@ function formatBulletsForPlainText(text: string): string {
     .join("\n");
 }
 
-function formatEarningsSection(byDate: Map<string, NamedEarningsEvent[]>): string {
-  if (byDate.size === 0) return "";
+function formatEarningsSection(byDate: Map<string, TieredEarningsEvent[]>): string {
+  const prominentByDate = Array.from(byDate.entries())
+    .map(([date, items]) => [date, items.filter((i) => i.tier !== "other")] as const)
+    .filter(([, items]) => items.length > 0);
+  if (prominentByDate.length === 0) return "";
+
   const lines = ["📅 *This Week's Earnings*"];
-  for (const [date, items] of byDate) {
+  for (const [date, items] of prominentByDate) {
     const dateLabel = formatShortDate(date, "en");
-    const tickers = items.map((i) => `${i.symbol} (${i.name})`).join(", ");
+    const tickers = items
+      .map((i) => (i.tier === "large-cap" ? `${i.symbol} (${i.name})` : `🔥${i.symbol}`))
+      .join(", ");
     lines.push(`${dateLabel}: ${tickers}`);
   }
   return lines.join("\n");
@@ -42,8 +49,13 @@ async function main() {
   const dateLabel = formatBriefDate(brief.date, "en");
   const footer = `Full brief: ${siteUrl}/en`;
 
-  const weekEarnings = await getEarningsForWeek();
-  const earningsSection = formatEarningsSection(largeCapEarningsByDate(weekEarnings));
+  const [weekEarnings, redditPosts] = await Promise.all([
+    getEarningsForWeek(),
+    fetchRedditSentiment(),
+  ]);
+  const earningsSection = formatEarningsSection(
+    anticipatedEarningsByDate(weekEarnings, redditPosts),
+  );
 
   const sections = [
     `📈 *Streetcode — Market Brief*`,
