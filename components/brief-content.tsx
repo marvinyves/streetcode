@@ -4,14 +4,14 @@ import { formatBriefDate, formatShortDate } from "@/lib/format-date";
 import type { Brief } from "@/lib/supabase/client";
 import type { EarningsEventRow, EconomicEventRow, HeatMapSnapshot } from "@/lib/calendar";
 import type { RedditPost } from "@/lib/pipeline/sources/reddit";
-import { anticipatedEarningsByDate } from "@/lib/earnings";
+import { anticipatedEarningsByDate, groupByTimeSlot, type TimeSlot } from "@/lib/earnings";
 import { normalizeBulletText } from "@/lib/normalize-bullets";
 import { StockTreemap } from "@/components/stock-treemap";
 import { StockHeatmapList } from "@/components/stock-heatmap-list";
 import { HeatmapLegend } from "@/components/heatmap-legend";
 import { EconomicCalendarTable } from "@/components/economic-calendar-table";
 
-const MAX_OTHER_PER_DAY = 10;
+const MAX_OTHER_PER_SLOT = 6;
 
 const IMPORTANCE_STYLES: Record<string, string> = {
   high: "bg-accent text-white",
@@ -179,63 +179,70 @@ export function BriefContent({
           </h2>
           <div className="mt-4 space-y-4">
             {Array.from(earningsByDate.entries()).map(([date, items]) => {
-              const prominent = items.filter((item) => item.tier !== "other");
-              const other = items.filter((item) => item.tier === "other");
-              const shownOther = other.slice(0, MAX_OTHER_PER_DAY);
-              const extra = other.length - shownOther.length;
+              const slots = groupByTimeSlot(items);
+              const slotOrder: { key: TimeSlot; label: string }[] = [
+                { key: "bmo", label: calendarDict.beforeOpen },
+                { key: "amc", label: calendarDict.afterClose },
+                { key: "unspecified", label: calendarDict.timeTBD },
+              ];
+
               return (
                 <div key={date}>
                   <span className="text-xs font-medium uppercase tracking-wide text-success">
                     {formatShortDate(date, locale)}
                   </span>
-                  <ul className="mt-1.5 flex flex-wrap gap-1.5">
-                    {prominent.map((item) => {
-                      const hint =
-                        item.hour === "bmo"
-                          ? calendarDict.beforeOpen
-                          : item.hour === "amc"
-                            ? calendarDict.afterClose
-                            : undefined;
-                      return item.tier === "large-cap" ? (
-                        <li
-                          key={item.id}
-                          className="rounded-lg border border-success/20 bg-surface px-2.5 py-1 text-sm"
-                          title={hint}
-                        >
-                          <span className="font-medium">{item.symbol}</span>
-                          <span className="text-muted"> · {item.name}</span>
-                        </li>
-                      ) : (
-                        <li
-                          key={item.id}
-                          className="rounded-lg border border-accent/30 bg-accent-soft px-2.5 py-1 text-sm font-medium text-accent"
-                          title={[hint, dict.trendingOnReddit].filter(Boolean).join(" · ")}
-                        >
-                          🔥 {item.symbol}
-                        </li>
-                      );
-                    })}
-                    {shownOther.map((item) => (
-                      <li
-                        key={item.id}
-                        className="rounded-md px-2 py-1 text-xs text-muted"
-                        title={
-                          item.hour === "bmo"
-                            ? calendarDict.beforeOpen
-                            : item.hour === "amc"
-                              ? calendarDict.afterClose
-                              : undefined
-                        }
-                      >
-                        {item.symbol}
-                      </li>
-                    ))}
-                    {extra > 0 && (
-                      <li className="flex items-center px-1 text-xs text-muted">
-                        +{extra}
-                      </li>
-                    )}
-                  </ul>
+                  <div className="mt-1.5 space-y-2">
+                    {slotOrder
+                      .filter((slot) => slots[slot.key].length > 0)
+                      .map((slot) => {
+                        const slotItems = slots[slot.key];
+                        const prominent = slotItems.filter((item) => item.tier !== "other");
+                        const other = slotItems.filter((item) => item.tier === "other");
+                        const shownOther = other.slice(0, MAX_OTHER_PER_SLOT);
+                        const extra = other.length - shownOther.length;
+                        return (
+                          <div key={slot.key}>
+                            <span className="text-[11px] font-medium uppercase tracking-wide text-success/70">
+                              {slot.label}
+                            </span>
+                            <ul className="mt-1 flex flex-wrap gap-1.5">
+                              {prominent.map((item) =>
+                                item.tier === "large-cap" ? (
+                                  <li
+                                    key={item.id}
+                                    className="rounded-lg border border-success/20 bg-surface px-2.5 py-1 text-sm"
+                                  >
+                                    <span className="font-medium">{item.symbol}</span>
+                                    <span className="text-muted"> · {item.name}</span>
+                                  </li>
+                                ) : (
+                                  <li
+                                    key={item.id}
+                                    className="rounded-lg border border-accent/30 bg-accent-soft px-2.5 py-1 text-sm font-medium text-accent"
+                                    title={dict.trendingOnReddit}
+                                  >
+                                    🔥 {item.symbol}
+                                  </li>
+                                ),
+                              )}
+                              {shownOther.map((item) => (
+                                <li
+                                  key={item.id}
+                                  className="rounded-md px-2 py-1 text-xs text-muted"
+                                >
+                                  {item.symbol}
+                                </li>
+                              ))}
+                              {extra > 0 && (
+                                <li className="flex items-center px-1 text-xs text-muted">
+                                  +{extra}
+                                </li>
+                              )}
+                            </ul>
+                          </div>
+                        );
+                      })}
+                  </div>
                 </div>
               );
             })}

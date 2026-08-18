@@ -4,7 +4,12 @@ config({ path: ".env.local" });
 import { getLatestBrief } from "@/lib/briefs";
 import { getEarningsForWeek } from "@/lib/calendar";
 import { formatBriefDate, formatShortDate } from "@/lib/format-date";
-import { anticipatedEarningsByDate, type TieredEarningsEvent } from "@/lib/earnings";
+import {
+  anticipatedEarningsByDate,
+  groupByTimeSlot,
+  type TieredEarningsEvent,
+  type TimeSlot,
+} from "@/lib/earnings";
 import { fetchRedditSentiment } from "@/lib/pipeline/sources/reddit";
 import { normalizeBulletText } from "@/lib/normalize-bullets";
 import { sendWhatsAppBrief } from "@/lib/pipeline/whatsapp";
@@ -21,6 +26,17 @@ function formatBulletsForPlainText(text: string): string {
     .join("\n");
 }
 
+const SLOT_LABEL: Record<TimeSlot, string> = {
+  bmo: "Before open",
+  amc: "After close",
+  unspecified: "Time TBD",
+};
+const SLOT_ORDER: TimeSlot[] = ["bmo", "amc", "unspecified"];
+
+function formatTicker(item: TieredEarningsEvent): string {
+  return item.tier === "large-cap" ? `${item.symbol} (${item.name})` : `🔥${item.symbol}`;
+}
+
 function formatEarningsSection(byDate: Map<string, TieredEarningsEvent[]>): string {
   const prominentByDate = Array.from(byDate.entries())
     .map(([date, items]) => [date, items.filter((i) => i.tier !== "other")] as const)
@@ -30,10 +46,12 @@ function formatEarningsSection(byDate: Map<string, TieredEarningsEvent[]>): stri
   const lines = ["📅 *This Week's Earnings*"];
   for (const [date, items] of prominentByDate) {
     const dateLabel = formatShortDate(date, "en");
-    const tickers = items
-      .map((i) => (i.tier === "large-cap" ? `${i.symbol} (${i.name})` : `🔥${i.symbol}`))
-      .join(", ");
-    lines.push(`${dateLabel}: ${tickers}`);
+    lines.push(`${dateLabel}:`);
+    const slots = groupByTimeSlot(items);
+    for (const slot of SLOT_ORDER) {
+      if (slots[slot].length === 0) continue;
+      lines.push(`  ${SLOT_LABEL[slot]}: ${slots[slot].map(formatTicker).join(", ")}`);
+    }
   }
   return lines.join("\n");
 }

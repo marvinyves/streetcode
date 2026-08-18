@@ -83,3 +83,20 @@ export function anticipatedEarningsByDate(
   }
   return result;
 }
+
+export type TimeSlot = "bmo" | "amc" | "unspecified";
+
+function slotOf(item: EarningsEventRow): TimeSlot {
+  if (item.hour === "bmo") return "bmo";
+  if (item.hour === "amc") return "amc";
+  return "unspecified";
+}
+
+/** Splits a day's earnings into Before Open / After Close / unspecified-time groups. */
+export function groupByTimeSlot<T extends EarningsEventRow>(items: T[]): Record<TimeSlot, T[]> {
+  const result: Record<TimeSlot, T[]> = { bmo: [], amc: [], unspecified: [] };
+  for (const item of items) {
+    result[slotOf(item)].push(item);
+  }
+  return result;
+}

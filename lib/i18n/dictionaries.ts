@@ -51,6 +51,7 @@ export const dictionaries = {
       earningsEmpty: "No earnings reports found for this week.",
       beforeOpen: "Before open",
       afterClose: "After close",
+      timeTBD: "Time TBD",
     },
     heatmap: {
       heading: "Market Heat Map",
@@ -116,6 +117,7 @@ export const dictionaries = {
       earningsEmpty: "Inga kvartalsrapporter hittades för denna vecka.",
       beforeOpen: "Före öppning",
       afterClose: "Efter stängning",
+      timeTBD: "Tid ej fastställd",
     },
     heatmap: {
       heading: "Marknadens värmekarta",
