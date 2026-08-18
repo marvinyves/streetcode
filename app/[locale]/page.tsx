@@ -2,7 +2,7 @@ import Link from "next/link";
 import { isLocale, getDictionary } from "@/lib/i18n/dictionaries";
 import { notFound } from "next/navigation";
 import { getLatestBrief } from "@/lib/briefs";
-import { getEarningsForWeek, getLatestHeatMap } from "@/lib/calendar";
+import { getEarningsForWeek, getEconomicEventsForWeek, getLatestHeatMap } from "@/lib/calendar";
 import { BriefContent } from "@/components/brief-content";
 
 export const revalidate = 300;
@@ -16,9 +16,10 @@ export default async function TodayPage({
   if (!isLocale(locale)) notFound();
 
   const dict = getDictionary(locale).today;
-  const [brief, weekEarnings, heatmap] = await Promise.all([
+  const [brief, weekEarnings, weekEconomic, heatmap] = await Promise.all([
     getLatestBrief(),
     getEarningsForWeek(),
+    getEconomicEventsForWeek(),
     getLatestHeatMap(),
   ]);
 
@@ -36,6 +37,7 @@ export default async function TodayPage({
         brief={brief}
         locale={locale}
         weekEarnings={weekEarnings}
+        weekEconomic={weekEconomic}
         heatmap={heatmap}
       />
 

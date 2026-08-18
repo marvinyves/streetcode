@@ -3,6 +3,8 @@ import { getSupabaseClient } from "@/lib/supabase/client";
 export type EconomicEventRow = {
   id: string;
   date: string;
+  time: string | null;
+  currency: string | null;
   label: string;
   detail: string | null;
   importance: string | null;
@@ -53,7 +55,8 @@ export async function getEconomicEventsForWeek(): Promise<EconomicEventRow[]> {
     .select("*")
     .gte("date", from)
     .lte("date", to)
-    .order("date", { ascending: true });
+    .order("date", { ascending: true })
+    .order("time", { ascending: true, nullsFirst: false });
 
   if (error) throw error;
   return data ?? [];

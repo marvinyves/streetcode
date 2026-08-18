@@ -1,11 +1,12 @@
 import { getSupabaseAdminClient } from "@/lib/supabase/admin";
-import type { EconomicEvent, FinnhubEarning } from "./sources/finnhub";
+import type { EconomicCalendarEvent } from "./sources/economic-calendar";
+import type { FinnhubEarning } from "./sources/finnhub";
 import type { SectorPerformance, StockPerformance } from "./sources/heatmap";
 
 export async function upsertEconomicEvents(
   fromDate: string,
   toDate: string,
-  events: EconomicEvent[],
+  events: EconomicCalendarEvent[],
 ) {
   const supabase = getSupabaseAdminClient();
 
@@ -23,6 +24,8 @@ export async function upsertEconomicEvents(
   const { error } = await supabase.from("economic_events").insert(
     events.map((e) => ({
       date: e.date,
+      time: e.time,
+      currency: e.currency,
       label: e.label,
       detail: e.detail,
       importance: e.importance,

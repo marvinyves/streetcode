@@ -6,6 +6,7 @@ import {
   fetchFinnhubEconomicCalendar,
 } from "@/lib/pipeline/sources/finnhub";
 import { fetchFredReleaseCalendar } from "@/lib/pipeline/sources/fred";
+import { fetchEconomicCalendar } from "@/lib/pipeline/sources/economic-calendar";
 import {
   fetchSectorHeatMap,
   fetchStockHeatMapQuotes,
@@ -39,15 +40,29 @@ async function main() {
   console.log("  Saved.");
 
   console.log("Fetching economic calendar...");
-  let economic = await fetchFinnhubEconomicCalendar(today, weekAhead);
+  let economic = await fetchEconomicCalendar(today, weekAhead);
   if (economic.length === 0) {
-    console.log("  Finnhub returned nothing; falling back to FRED release dates...");
+    console.log("  Free feed returned nothing; falling back to Finnhub...");
+    const finnhub = await fetchFinnhubEconomicCalendar(today, weekAhead);
+    economic = finnhub.map((e) => ({
+      date: e.date,
+      time: null,
+      currency: "USD",
+      label: e.label,
+      detail: e.detail,
+      importance: (e.importance as "high" | "medium" | "low" | null) ?? null,
+    }));
+  }
+  if (economic.length === 0) {
+    console.log("  Finnhub returned nothing either; falling back to FRED release dates...");
     const fredReleases = await fetchFredReleaseCalendar(today, weekAhead);
     economic = fredReleases.map((r) => ({
       date: r.date,
+      time: null,
+      currency: "USD",
       label: r.label,
       detail: null,
-      importance: "high",
+      importance: "high" as const,
     }));
   }
   console.log(`  ${economic.length} economic events`);

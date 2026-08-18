@@ -2,12 +2,13 @@ import Link from "next/link";
 import { getDictionary, type Locale } from "@/lib/i18n/dictionaries";
 import { formatBriefDate, formatShortDate } from "@/lib/format-date";
 import type { Brief } from "@/lib/supabase/client";
-import type { EarningsEventRow, HeatMapSnapshot } from "@/lib/calendar";
+import type { EarningsEventRow, EconomicEventRow, HeatMapSnapshot } from "@/lib/calendar";
 import { UNIVERSE_BY_SYMBOL, rankEarnings } from "@/lib/earnings";
 import { normalizeBulletText } from "@/lib/normalize-bullets";
 import { StockTreemap } from "@/components/stock-treemap";
 import { StockHeatmapList } from "@/components/stock-heatmap-list";
 import { HeatmapLegend } from "@/components/heatmap-legend";
+import { EconomicCalendarTable } from "@/components/economic-calendar-table";
 
 const MAX_OTHER_PER_DAY = 10;
 
@@ -40,12 +41,14 @@ export function BriefContent({
   locale,
   heading,
   weekEarnings,
+  weekEconomic,
   heatmap,
 }: {
   brief: Brief;
   locale: Locale;
   heading?: string;
   weekEarnings?: EarningsEventRow[];
+  weekEconomic?: EconomicEventRow[];
   heatmap?: HeatMapSnapshot | null;
 }) {
   const dict = getDictionary(locale).today;
@@ -157,6 +160,15 @@ export function BriefContent({
           <p className="mt-3 text-[15px] leading-relaxed text-foreground/90">
             {brief.sentiment_notes}
           </p>
+        </section>
+      )}
+
+      {weekEconomic && weekEconomic.length > 0 && (
+        <section className="mt-10">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
+            {calendarDict.economicHeading}
+          </h2>
+          <EconomicCalendarTable events={weekEconomic} locale={locale} />
         </section>
       )}
 

@@ -2,14 +2,9 @@ import { notFound } from "next/navigation";
 import { isLocale, getDictionary } from "@/lib/i18n/dictionaries";
 import { getEconomicEventsForWeek, getEarningsForWeek } from "@/lib/calendar";
 import { formatShortDate } from "@/lib/format-date";
+import { EconomicCalendarTable } from "@/components/economic-calendar-table";
 
 export const revalidate = 300;
-
-const IMPORTANCE_STYLES: Record<string, string> = {
-  high: "bg-accent text-white",
-  medium: "bg-accent-soft text-accent",
-  low: "bg-border text-muted",
-};
 
 export default async function CalendarPage({
   params,
@@ -41,34 +36,7 @@ export default async function CalendarPage({
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
           {dict.economicHeading}
         </h2>
-        {economic.length === 0 ? (
-          <p className="mt-3 text-sm text-muted">{dict.economicEmpty}</p>
-        ) : (
-          <ul className="mt-4 divide-y divide-border rounded-xl border border-border">
-            {economic.map((e) => (
-              <li key={e.id} className="flex items-start justify-between gap-4 px-4 py-3">
-                <div>
-                  <p className="font-medium">{e.label}</p>
-                  {e.detail && <p className="text-sm text-muted">{e.detail}</p>}
-                </div>
-                <div className="flex shrink-0 flex-col items-end gap-1">
-                  <span className="text-sm text-muted">
-                    {formatShortDate(e.date, locale)}
-                  </span>
-                  {e.importance && (
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-medium capitalize ${
-                        IMPORTANCE_STYLES[e.importance] ?? "bg-border text-muted"
-                      }`}
-                    >
-                      {e.importance}
-                    </span>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        <EconomicCalendarTable events={economic} locale={locale} />
       </section>
 
       <section className="mt-10">
